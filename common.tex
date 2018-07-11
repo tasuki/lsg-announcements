@@ -1,0 +1,39 @@
+\documentclass[a4paper]{article}
+
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{polski}
+\usepackage{scrextend}
+\usepackage{fontspec}
+\usepackage{multicol}
+
+\setmainfont{Eczar}
+\setmonofont{Fira Mono}
+
+\pagestyle{empty}
+\parindent 0pt
+\changefontsizes[24pt]{18pt}
+
+\newcommand{\maintitle}[1]{{
+\vskip 20pt\bf\fontsize{32pt}{32pt}\selectfont#1\vskip 10pt
+}}
+
+\newcommand{\subtitle}[1]{{
+\vskip 20pt\bf\fontsize{24pt}{24pt}\selectfont#1\vskip 5pt
+}}
+
+\newcommand{\li}[1]{{
+\parindent -1em{--\enspace#1}
+
+}}
+
+\newcommand{\schedule}[1]{
+\begin{tabular}{ r p{14cm} }
+#1
+\end{tabular}
+}
+
+\newcommand{\prizes}[1]{
+\begin{tabular}{ l r }
+#1
+\end{tabular}
+}
