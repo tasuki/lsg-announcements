@@ -2,9 +2,11 @@
 
 \usepackage[margin=2.5cm]{geometry}
 \usepackage{polski}
-\usepackage{scrextend}
 \usepackage{fontspec}
 \usepackage{multicol}
+\usepackage{scrextend}
+\usepackage{ragged2e}
+\usepackage{tabularx}
 
 \setmainfont{Eczar}
 \setmonofont{Fira Mono}
@@ -14,11 +16,15 @@
 \changefontsizes[24pt]{18pt}
 
 \newcommand{\maintitle}[1]{{
-\vskip 20pt\bf\fontsize{32pt}{32pt}\selectfont#1\vskip 10pt
+\bf\fontsize{32pt}{32pt}\selectfont#1\vskip 10pt
 }}
 
 \newcommand{\subtitle}[1]{{
-\vskip 20pt\bf\fontsize{24pt}{24pt}\selectfont#1\vskip 5pt
+\bf\fontsize{24pt}{24pt}\selectfont#1\vskip 5pt
+}}
+
+\newcommand{\daytitle}[1]{{
+\bf\fontsize{24pt}{24pt}\selectfont\parindent 1cm #1\vskip 5pt
 }}
 
 \newcommand{\li}[1]{{
@@ -26,8 +32,11 @@
 
 }}
 
+\newcolumntype{R}[1]{>{\raggedleft\arraybackslash}p{#1}}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+
 \newcommand{\schedule}[1]{
-\begin{tabular}{ r p{14cm} }
+\begin{tabular}{ R{1.5cm} L{16cm} }
 #1
 \end{tabular}
 }
