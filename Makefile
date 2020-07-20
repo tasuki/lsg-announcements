@@ -1,2 +1,2 @@
 default:
-	xelatex 2019/6.tex
+	xelatex 2020/6.tex
