@@ -76,13 +76,34 @@ def playerMatch(
 
 // view
 
-def loserLabel(context: SvgContext): xml.Elem =
-  <text xml:space="preserve" x="180" y="1370"
-      transform="rotate(-90,180,1370)" style={context.bigStyle}>
-    <tspan x="0" dy="1.2em">drabinka</tspan>
-    <tspan x="0" dy="1.2em"> drugiej</tspan>
-    <tspan x="0" dy="1.2em"> nadziei</tspan>
+def loserLabelBottomRight(context: SvgContext): xml.Elem = {
+  val (x, y) = (2350, 1300)
+  <text y={s"$y"} style={context.bigStyle}>
+    <tspan xml:space="preserve" x={s"$x"} dy="1.2em">drabinka</tspan>
+    <tspan xml:space="preserve" x={s"$x"} dy="1.2em"> drugiej</tspan>
+    <tspan xml:space="preserve" x={s"$x"} dy="1.2em"> nadziei</tspan>
   </text>
+}
+
+def loserLabelBottomLeft(context: SvgContext): xml.Elem = {
+  val (x, y) = (100, 1500)
+  <text x={s"$x"} y={s"$y"}
+      transform={s"rotate(-90,$x,$y)"} style={context.bigStyle}>
+    <tspan xml:space="preserve" x="0" dy="1.2em">drabinka</tspan>
+    <tspan xml:space="preserve" x="0" dy="1.2em"> drugiej</tspan>
+    <tspan xml:space="preserve" x="0" dy="1.2em"> nadziei</tspan>
+  </text>
+}
+
+def placeMedal(place: Int, round: Int, topOffset: Int)(context: SvgContext): xml.Elem = {
+  val (x, y) = context.getPlayerCoords(Player(None, round, topOffset))
+  <g transform={s"translate(${x + context.playerWidth/2 - 25},${y})"}>
+    <text text-anchor="middle" x="25" y="45" style={context.bigStyle}>{place.toString}</text>
+    <circle r="35" cx="25" cy="25" style={context.pathStyle} />
+    <path style={context.pathStyle} d="m  5,-4 -15,-20 h  28 l  7,13" />
+    <path style={context.pathStyle} d="m 45,-4  15,-20 h -28 l -7,13" />
+  </g>
+}
 
 def dummyMatch(round: Int, from: Int, to: Int)(context: SvgContext): xml.Elem =
   context.getMatchPath(Match(
@@ -96,11 +117,11 @@ def dummyPlayer(round: Int, topOffset: Int)(context: SvgContext): xml.Elem =
 
 case class SvgContext(height: Int, width: Int, padding: Int, e: Elimination) {
   val contentHeight = height - padding * 2
-  val contentWidth = width - padding * 2
+  val contentWidth = width - padding * 2 - 40
   val playerWidth = contentWidth / (e.rounds + 1)
   val fontStyle = "font-size: 40; font-family: Fira Mono; font-variant-numeric: lining-nums tabular-nums;"
   val bigStyle = "font-size: 60; font-family: Fira Mono;"
-  val pathStyle = "stroke: black; stroke-width: 4; stroke-linecap: round;"
+  val pathStyle = "stroke: black; stroke-width: 4; stroke-linecap: round; fill: none;"
 
   def getPlayerCoords(p: Player): (Int, Int) = {
     val x = 40 + padding + ((p.round - 1) * contentWidth) / (e.rounds + 1)
@@ -111,7 +132,7 @@ case class SvgContext(height: Int, width: Int, padding: Int, e: Elimination) {
   def getPlayerPath(p: Player): xml.Elem = {
     val (x, y) = getPlayerCoords(p)
     val text = p.label match {
-      case Some(label) => <text x={(x - 5).toString} y={y.toString}
+      case Some(label) => <text x={(x - 4).toString} y={y.toString}
             text-anchor="end"
             style={fontStyle}>{label}</text>
       case None => xml.Text("")
@@ -128,8 +149,8 @@ case class SvgContext(height: Int, width: Int, padding: Int, e: Elimination) {
     val (x2, y2) = getPlayerCoords(m.p2)
     val (mx, my) = getPlayerCoords(m.winner)
     val text = m.label match {
-      case Some(label) => <text x={(mx - 10).toString} y={(my + 14).toString}
-            text-anchor="end" style={fontStyle}>{label}</text>
+      case Some(label) => <text x={(mx - 10).toString} y={my.toString}
+              dy=".35em" text-anchor="end" style={fontStyle}>{label}</text>
       case _ => xml.Text("")
     }
     val extend =
@@ -150,7 +171,7 @@ case class SvgContext(height: Int, width: Int, padding: Int, e: Elimination) {
 
     val text = if (r == 1) "runda" else {s"${r + roundModifier}."}
     val (x, y) = getPlayerCoords(Player(None, r, e.verticalSteps))
-    <text x={(x + playerWidth/2).toString} y={y.toString}
+    <text x={(x + playerWidth/2).toString} y={(y + 40).toString}
       text-anchor="middle" style={bigStyle}>{text}</text>
   }
 }
@@ -184,7 +205,7 @@ def draw(e: Elimination): xml.Elem = {
       winnermatches)
     }
 
-  val context = SvgContext(2100, 2970, 150, e)
+  val context = SvgContext(2100, 2970, 50, e)
 
   <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -296,16 +317,34 @@ val drops32 = Seq(
 Seq(
   Elimination("single-elim-08.svg",  8, false, 3, 18, Nil, Nil),
   Elimination("single-elim-16.svg", 16, false, 4, 34, Nil, Nil),
-  Elimination("single-elim-32.svg", 32, false, 5, 68, Nil, Nil),
+  Elimination("single-elim-32.svg", 32, false, 5, 66, Nil, Nil),
 
-  Elimination("double-elim-08.svg",  8,  true, 6,  30, drops8,  Seq(loserLabel)),
-  Elimination("double-elim-16.svg", 16,  true, 7,  54, drops16, Seq(loserLabel)),
+  Elimination("double-elim-08.svg",  8,  true, 6,  30, drops8,  Seq(
+    loserLabelBottomLeft,
+    placeMedal(1, 7, 15),
+    placeMedal(2, 6, 15),
+    placeMedal(3, 5, 15),
+    placeMedal(4, 4, 15),
+  )),
+  Elimination("double-elim-16.svg", 16,  true, 7,  52, drops16, Seq(
+    loserLabelBottomLeft,
+    placeMedal(1, 8, 29),
+    placeMedal(2, 7, 29),
+    placeMedal(3, 6, 29),
+    placeMedal(4, 5, 29),
+  )),
 
-  Elimination("double-elim-32-1.svg", 32, true, 6, 68, Nil, Seq(
+  Elimination("double-elim-32-1.svg", 32, true, 6, 66, Nil, Seq(
     dummyMatch(6, 33, 64),
     dummyPlayer(7, 60),
+    placeMedal(1, 7, 50),
+    placeMedal(2, 6, 50),
   )),
-  Elimination("double-elim-32-2.svg", 32, true, 8, 44, drops32, Seq(
+  Elimination("double-elim-32-2.svg", 32, true, 8, 42, drops32, Seq(
     dummyMatch(8, 21, 2),
+    loserLabelBottomRight,
+    placeMedal(2, 8, 22),
+    placeMedal(3, 7, 22),
+    placeMedal(4, 6, 22),
   )),
 ).map(process)
