@@ -26,6 +26,11 @@ case class Match(label: Option[String], p1: Player, p2: Player) {
   )
 }
 
+case class PlayOffSettings(print: (Int => Boolean), shift: (Int => Int))
+val noLabelPOsettings = PlayOffSettings({_ => false}, {_ => 0})
+val labelPOsettings = PlayOffSettings({_ => true}, {_ => 0})
+
+
 // functions
 
 def getPower(p: Int): Int =
@@ -53,22 +58,22 @@ def playersMatch(players: Seq[Player], round: Int, printLabel: Boolean): Seq[Mat
 }
 
 def playOff(
-  ps: Seq[Player],
   round: Int,
-  printLabel: Boolean,
+  players: Seq[Player],
   drops: Seq[Seq[Player]],
+  playOffSettings: PlayOffSettings,
 ): (Seq[Match], Seq[Seq[Player]]) = {
-  val players = ps ++ drops.headOption.getOrElse(Nil)
-  val matches = playersMatch(players, round, printLabel)
+  val allPlayers = players ++ drops.headOption.getOrElse(Nil)
+  val matches = playersMatch(allPlayers, round, playOffSettings.print(round))
   val winners = matches.map(_.winner)
 
   if (winners.length <= 1 && drops.flatten.length < 1) {
     // there's no more than one winner and there are no more drops
-    if (winners.length == 0) (matches, Seq(players))
+    if (winners.length == 0) (matches, Seq(allPlayers))
     else (matches, Seq(winners))
   } else {
     val (moreMatches, moreWinners) =
-      playOff(winners, round + 1, printLabel, drops.drop(1))
+      playOff(round + 1, winners, drops.drop(1), playOffSettings)
     (moreMatches ++ matches, moreWinners.prepended(winners))
   }
 }
@@ -187,13 +192,13 @@ def draw(e: Elimination): xml.Elem = {
   def getDoublePlayersAndMatches() = {
     if (e.drops.nonEmpty && e.participants > 16) {
       // loser bracket only
-      val (losermatches, losers) = playOff(Nil, 2, false, e.drops)
+      val (losermatches, losers) = playOff(2, Nil, e.drops, noLabelPOsettings)
       (e.drops.flatten ++ losers.flatten,
       losermatches)
     } else {
       // winner & loser bracket (loser bracket empty if no drops)
-      val (winnermatches, winners) = playOff(initialPlayers, 1, true, Nil)
-      val (losermatches, losers) = playOff(Nil, 2, false, e.drops)
+      val (winnermatches, winners) = playOff(1, initialPlayers, Nil, labelPOsettings)
+      val (losermatches, losers) = playOff(2, Nil, e.drops, noLabelPOsettings)
 
       val finale: Seq[Match] = playersMatch(winners.last ++ losers.last, e.rounds, false)
       val winner: Seq[Player] = finale.map(_.winner)
@@ -204,7 +209,7 @@ def draw(e: Elimination): xml.Elem = {
   }
 
   def getSinglePlayersAndMatches() = {
-    val (winnermatches, winners) = playOff(initialPlayers, 1, false, Nil)
+    val (winnermatches, winners) = playOff(1, initialPlayers, Nil, noLabelPOsettings)
     (initialPlayers ++ winners.flatten,
     winnermatches)
   }
