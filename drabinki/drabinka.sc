@@ -40,7 +40,7 @@ def seedPlayers(players: Seq[Int], step: Int, steps: Int): Seq[Int] =
     seedPlayers(newPlayers, step + 1, steps)
   }
 
-def playOff(players: Seq[Player], round: Int, printLabel: Boolean): Seq[Match] = {
+def playersMatch(players: Seq[Player], round: Int, printLabel: Boolean): Seq[Match] = {
   players.sortBy(_.topOffset).sliding(2, 2).zipWithIndex.flatMap {
     case (List(p1, p2), i) => {
       val label =
@@ -52,23 +52,24 @@ def playOff(players: Seq[Player], round: Int, printLabel: Boolean): Seq[Match] =
   }.toSeq
 }
 
-def playerMatch(
+def playOff(
   ps: Seq[Player],
   round: Int,
   printLabel: Boolean,
   drops: Seq[Seq[Player]],
 ): (Seq[Match], Seq[Seq[Player]]) = {
   val players = ps ++ drops.headOption.getOrElse(Nil)
-  val matches = playOff(players, round, printLabel)
+  val matches = playersMatch(players, round, printLabel)
   val winners = matches.map(_.winner)
 
   if (winners.length <= 1 && drops.flatten.length < 1) {
+    // there's no more than one winner and there are no more drops
     if (winners.length == 0) (matches, Seq(players))
     else (matches, Seq(winners))
   } else {
-    val (matches1, winners1) =
-      playerMatch(winners, round + 1, printLabel, drops.drop(1))
-    (matches1 ++ matches, winners1.prepended(winners))
+    val (moreMatches, moreWinners) =
+      playOff(winners, round + 1, printLabel, drops.drop(1))
+    (moreMatches ++ matches, moreWinners.prepended(winners))
   }
 }
 
@@ -100,8 +101,8 @@ def placeMedal(place: Int, round: Int, topOffset: Int)(context: SvgContext): xml
   <g transform={s"translate(${x + context.playerWidth/2 - 25},${y})"}>
     <text text-anchor="middle" x="25" y="45" style={context.bigStyle}>{place.toString}</text>
     <circle r="35" cx="25" cy="25" style={context.pathStyle} />
-    <path style={context.pathStyle} d="m  5,-4 -15,-20 h  28 l  7,13" />
-    <path style={context.pathStyle} d="m 45,-4  15,-20 h -28 l -7,13" />
+    <path style={context.pathStyle} d="m  2,-4 l -15,-20 h  28 l  7,13" />
+    <path style={context.pathStyle} d="m 48,-4 l  15,-20 h -28 l -7,13" />
   </g>
 }
 
@@ -183,27 +184,34 @@ def draw(e: Elimination): xml.Elem = {
       case (label, i) => Player(Some(label.toString), 1, 2+2*i)
     }
 
-  val (players: Seq[Player], matches: Seq[Match]) =
-    if (e.double) {
-      if (e.drops.nonEmpty && e.participants > 16) {
-        val (losermatches, losers) = playerMatch(Nil, 2, false, e.drops)
-        (e.drops.flatten ++ losers.flatten,
-        losermatches)
-      } else {
-        val (winnermatches, winners) = playerMatch(initialPlayers, 1, true, Nil)
-        val (losermatches, losers) = playerMatch(Nil, 2, false, e.drops)
-
-        val finale: Seq[Match] = playOff(winners.last ++ losers.last, e.rounds, false)
-        val winner: Seq[Player] = finale.map(_.winner)
-
-        (initialPlayers ++ winners.flatten ++ e.drops.flatten ++ losers.flatten ++ winner,
-        winnermatches ++ losermatches ++ finale)
-      }
+  def getDoublePlayersAndMatches() = {
+    if (e.drops.nonEmpty && e.participants > 16) {
+      // loser bracket only
+      val (losermatches, losers) = playOff(Nil, 2, false, e.drops)
+      (e.drops.flatten ++ losers.flatten,
+      losermatches)
     } else {
-      val (winnermatches, winners) = playerMatch(initialPlayers, 1, false, Nil)
-      (initialPlayers ++ winners.flatten,
-      winnermatches)
+      // winner & loser bracket (loser bracket empty if no drops)
+      val (winnermatches, winners) = playOff(initialPlayers, 1, true, Nil)
+      val (losermatches, losers) = playOff(Nil, 2, false, e.drops)
+
+      val finale: Seq[Match] = playersMatch(winners.last ++ losers.last, e.rounds, false)
+      val winner: Seq[Player] = finale.map(_.winner)
+
+      (initialPlayers ++ winners.flatten ++ e.drops.flatten ++ losers.flatten ++ winner,
+      winnermatches ++ losermatches ++ finale)
     }
+  }
+
+  def getSinglePlayersAndMatches() = {
+    val (winnermatches, winners) = playOff(initialPlayers, 1, false, Nil)
+    (initialPlayers ++ winners.flatten,
+    winnermatches)
+  }
+
+  val (players: Seq[Player], matches: Seq[Match]) =
+    if (e.double) getDoublePlayersAndMatches()
+    else getSinglePlayersAndMatches()
 
   val context = SvgContext(2100, 2970, 50, e)
 
@@ -219,11 +227,6 @@ def draw(e: Elimination): xml.Elem = {
     { (1 to e.rounds).map(context.getRoundPath) }
     { e.extras.map(extra => extra(context)) }
   </svg>
-}
-
-def process(e: Elimination) = {
-  val pp = new xml.PrettyPrinter(100, 2)
-  write.over(pwd/"drabinki-pdf"/e.label, pp.format(draw(e)))
 }
 
 val drops8 = Seq(
@@ -347,4 +350,7 @@ Seq(
     placeMedal(3, 7, 22),
     placeMedal(4, 6, 22),
   )),
-).map(process)
+).map { e =>
+  val pp = new xml.PrettyPrinter(100, 2)
+  write.over(pwd/"drabinki-pdf"/e.label, pp.format(draw(e)))
+}
