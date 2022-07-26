@@ -6,7 +6,7 @@ val alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 case class Elimination(
   label: String,
-  participants: Int,
+  participants: Seq[Int],
   double: Boolean,
   rounds: Int,
   verticalSteps: Int,
@@ -16,6 +16,8 @@ case class Elimination(
   // symmetrical, sums to zero
   val nudges =
     (1 to (1 + rounds)).map(r => (2 + rounds - 2 * r) / 2)
+
+  val multipageDrops = drops.nonEmpty && participants.length > 16
 }
 case class Player(label: Option[String], round: Int, topOffset: Int)
 case class Match(label: Option[String], p1: Player, p2: Player, shiftUp: Option[Int] = None) {
@@ -44,6 +46,8 @@ def seedPlayers(players: Seq[Int], step: Int, steps: Int): Seq[Int] =
     val newPlayers = players.flatMap(p => Seq(p, magic - p))
     seedPlayers(newPlayers, step + 1, steps)
   }
+def seedPlayers(participants: Int): Seq[Int] =
+  seedPlayers(Seq(1), 1, getPower(participants))
 
 def playersMatch(
   players: Seq[Player],
@@ -182,7 +186,7 @@ case class SvgContext(height: Int, width: Int, padding: Int, e: Elimination) {
 
   def getRoundPath(r: Int): xml.Elem = {
     val roundModifier =
-      if (e.drops.nonEmpty && e.participants > 16) 1
+      if (e.multipageDrops) 1
       else 0
 
     val text = if (r == 1) "runda" else {s"${r + roundModifier}."}
@@ -194,13 +198,12 @@ case class SvgContext(height: Int, width: Int, padding: Int, e: Elimination) {
 
 
 def draw(e: Elimination): xml.Elem = {
-  val initialPlayers: Seq[Player] = seedPlayers(Seq(1), 1, getPower(e.participants))
-    .zipWithIndex.map {
-      case (label, i) => Player(Some(label.toString), 1, 2+2*i)
-    }
+  val initialPlayers: Seq[Player] = e.participants.zipWithIndex.map {
+    case (label, i) => Player(Some(label.toString), 1, 2+2*i)
+  }
 
   def getDoublePlayersAndMatches() = {
-    if (e.drops.nonEmpty && e.participants > 16) {
+    if (e.multipageDrops) {
       // loser bracket only
       val (losermatches, losers) = playOff(2, Nil, e.drops, noLabelSettings)
       (e.drops.flatten ++ losers.flatten,
@@ -339,7 +342,7 @@ val drops32 = Seq(
 )
 
 Seq(
-  Elimination("single-elim-08.svg",  8, false, 3, 21, Nil, Seq(
+  Elimination("single-elim-08.svg", seedPlayers( 8), false, 3, 21, Nil, Seq(
     dummyPlayer(Some("2A"), 3, 17),
     dummyPlayer(Some("2B"), 3, 19),
     dummyMatch(3, 17, 19),
@@ -348,7 +351,7 @@ Seq(
     placeMedal(2, 3, 10),
     placeMedal(3, 4, 19),
   )),
-  Elimination("single-elim-16.svg", 16, false, 4, 36, Nil, Seq(
+  Elimination("single-elim-16.svg", seedPlayers(16), false, 4, 36, Nil, Seq(
     dummyPlayer(Some("3A"), 4, 31),
     dummyPlayer(Some("3B"), 4, 34),
     dummyMatch(4, 31, 34),
@@ -357,7 +360,7 @@ Seq(
     placeMedal(2, 4, 17),
     placeMedal(3, 5, 33),
   )),
-  Elimination("single-elim-32.svg", 32, false, 5, 66, Nil, Seq(
+  Elimination("single-elim-32.svg", seedPlayers(32), false, 5, 66, Nil, Seq(
     dummyPlayer(Some("4A"), 5, 58),
     dummyPlayer(Some("4B"), 5, 62),
     dummyMatch(5, 58, 62),
@@ -367,26 +370,26 @@ Seq(
     placeMedal(3, 6, 62),
   )),
 
-  Elimination("double-elim-08.svg",  8,  true, 6,  30, drops8,  Seq(
+  Elimination("double-elim-08.svg", seedPlayers( 8),  true, 6,  30, drops8,  Seq(
     loserLabelBottomLeft,
     placeMedal(1, 7, 15),
     placeMedal(2, 6, 15),
     placeMedal(3, 5, 15),
   )),
-  Elimination("double-elim-16.svg", 16,  true, 7,  52, drops16, Seq(
+  Elimination("double-elim-16.svg", seedPlayers(16),  true, 7,  52, drops16, Seq(
     loserLabelBottomLeft,
     placeMedal(1, 8, 29),
     placeMedal(2, 7, 29),
     placeMedal(3, 6, 29),
   )),
 
-  Elimination("double-elim-32-1.svg", 32, true, 6, 66, Nil, Seq(
+  Elimination("double-elim-32-1.svg", seedPlayers(32), true, 6, 66, Nil, Seq(
     dummyMatch(6, 33, 64),
     dummyPlayer(None, 7, 60),
     placeMedal(1, 7, 50),
     placeMedal(2, 6, 50),
   )),
-  Elimination("double-elim-32-2.svg", 32, true, 8, 42, drops32, Seq(
+  Elimination("double-elim-32-2.svg", seedPlayers(32), true, 8, 42, drops32, Seq(
     dummyMatch(8, 21, 2),
     loserLabelBottomRight,
     placeMedal(2, 8, 22),
