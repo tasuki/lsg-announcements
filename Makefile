@@ -38,8 +38,8 @@ handi-pdf/handi-13.pdf: handi/handi-13.tex
 	xelatex -output-directory handi-pdf handi/handi-13.tex
 
 drabinki: drabinki-svg \
-	drabinki-pdf/single-elim-08.pdf drabinki-pdf/single-elim-16.pdf drabinki-pdf/single-elim-32.pdf \
-	drabinki-pdf/double-elim-08.pdf drabinki-pdf/double-elim-16.pdf drabinki-pdf/double-elim-32.pdf
+	drabinki-pdf/single-elim-08.pdf drabinki-pdf/single-elim-16.pdf drabinki-pdf/single-elim-32.pdf drabinki-pdf/single-elim-64.pdf \
+	drabinki-pdf/double-elim-08.pdf drabinki-pdf/double-elim-16.pdf drabinki-pdf/double-elim-32.pdf drabinki-pdf/double-elim-64.pdf
 
 drabinki-svg:
 	amm drabinki/drabinka.sc
@@ -50,6 +50,10 @@ drabinki-pdf/single-elim-16.pdf: drabinki-pdf/single-elim-16.svg
 	inkscape drabinki-pdf/single-elim-16.svg --export-pdf=drabinki-pdf/single-elim-16.pdf
 drabinki-pdf/single-elim-32.pdf: drabinki-pdf/single-elim-32.svg
 	inkscape drabinki-pdf/single-elim-32.svg --export-pdf=drabinki-pdf/single-elim-32.pdf
+drabinki-pdf/single-elim-64.pdf: drabinki-pdf/single-elim-64-1.svg drabinki-pdf/single-elim-64-2.svg
+	inkscape drabinki-pdf/single-elim-64-1.svg --export-pdf=drabinki-pdf/single-elim-64-1.tmp.pdf
+	inkscape drabinki-pdf/single-elim-64-2.svg --export-pdf=drabinki-pdf/single-elim-64-2.tmp.pdf
+	pdfunite drabinki-pdf/single-elim-64-1.tmp.pdf drabinki-pdf/single-elim-64-2.tmp.pdf drabinki-pdf/single-elim-64.pdf
 drabinki-pdf/double-elim-08.pdf: drabinki-pdf/double-elim-08.svg
 	inkscape drabinki-pdf/double-elim-08.svg --export-pdf=drabinki-pdf/double-elim-08.pdf
 drabinki-pdf/double-elim-16.pdf: drabinki-pdf/double-elim-16.svg
@@ -58,6 +62,11 @@ drabinki-pdf/double-elim-32.pdf: drabinki-pdf/double-elim-32-1.svg drabinki-pdf/
 	inkscape drabinki-pdf/double-elim-32-1.svg --export-pdf=drabinki-pdf/double-elim-32-1.tmp.pdf
 	inkscape drabinki-pdf/double-elim-32-2.svg --export-pdf=drabinki-pdf/double-elim-32-2.tmp.pdf
 	pdfunite drabinki-pdf/double-elim-32-1.tmp.pdf drabinki-pdf/double-elim-32-2.tmp.pdf drabinki-pdf/double-elim-32.pdf
+drabinki-pdf/double-elim-64.pdf: drabinki-pdf/double-elim-64-1.svg drabinki-pdf/double-elim-64-2.svg drabinki-pdf/double-elim-64-3.svg
+	inkscape drabinki-pdf/double-elim-64-1.svg --export-pdf=drabinki-pdf/double-elim-64-1.tmp.pdf
+	inkscape drabinki-pdf/double-elim-64-2.svg --export-pdf=drabinki-pdf/double-elim-64-2.tmp.pdf
+	inkscape drabinki-pdf/double-elim-64-3.svg --export-pdf=drabinki-pdf/double-elim-64-3.tmp.pdf
+	pdfunite drabinki-pdf/double-elim-64-1.tmp.pdf drabinki-pdf/double-elim-64-2.tmp.pdf drabinki-pdf/double-elim-64-3.tmp.pdf drabinki-pdf/double-elim-64.pdf
 
 
 cleanish:

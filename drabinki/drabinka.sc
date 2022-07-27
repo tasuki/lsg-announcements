@@ -2,7 +2,7 @@ import ammonite.ops._
 
 // data
 
-val alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+val alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ+-*/=$"
 
 case class Elimination(
   label: String,
@@ -38,8 +38,8 @@ case class PlayOffSettings(print: (Int => Boolean), page: Int, shift: (Int => In
     else None
   }
 }
-val noLabelSettings = PlayOffSettings(_ => false, 1, _ => 0) // TODO page!!!
-val labelAllSettings = PlayOffSettings(_ => true, 1, _ => 0) // TODO page!!!
+def noLabelSettings(page: Int) = PlayOffSettings(_ => false, page, _ => 0)
+def labelAllSettings(page: Int) = PlayOffSettings(_ => true, page, _ => 0)
 
 
 // functions
@@ -212,13 +212,13 @@ def draw(e: Elimination): xml.Elem = {
   def getDoublePlayersAndMatches() = {
     if (e.multipageDrops) {
       // loser bracket only
-      val (losermatches, losers) = playOff(2, Nil, e.drops, noLabelSettings)
+      val (losermatches, losers) = playOff(2, Nil, e.drops, noLabelSettings(e.page))
       (e.drops.flatten ++ losers.flatten,
       losermatches)
     } else {
       // winner & loser bracket (loser bracket empty if no drops)
-      val (winnermatches, winners) = playOff(1, initialPlayers, Nil, labelAllSettings)
-      val (losermatches, losers) = playOff(2, Nil, e.drops, noLabelSettings)
+      val (winnermatches, winners) = playOff(1, initialPlayers, Nil, labelAllSettings(e.page))
+      val (losermatches, losers) = playOff(2, Nil, e.drops, noLabelSettings(e.page))
 
       val finale: Seq[Match] = playersMatch(winners.last ++ losers.last, e.rounds, (_, _) => None)
       val winner: Seq[Player] = finale.map(_.winner)
@@ -348,6 +348,86 @@ val drops32 = Seq(
   ),
 )
 
+val drops64 = Seq(
+  Seq(
+    Player(Some("1A"), 1,  3),
+    Player(Some("1B"), 1,  5),
+    Player(Some("1C"), 1,  8),
+    Player(Some("1D"), 1, 10),
+    Player(Some("1E"), 1, 13),
+    Player(Some("1F"), 1, 15),
+    Player(Some("1G"), 1, 18),
+    Player(Some("1H"), 1, 20),
+    Player(Some("1Q"), 1, 23),
+    Player(Some("1R"), 1, 25),
+    Player(Some("1S"), 1, 28),
+    Player(Some("1T"), 1, 30),
+    Player(Some("1U"), 1, 33),
+    Player(Some("1V"), 1, 35),
+    Player(Some("1W"), 1, 38),
+    Player(Some("1X"), 1, 40),
+    Player(Some("1I"), 1, 43),
+    Player(Some("1J"), 1, 45),
+    Player(Some("1K"), 1, 48),
+    Player(Some("1L"), 1, 50),
+    Player(Some("1M"), 1, 53),
+    Player(Some("1N"), 1, 55),
+    Player(Some("1O"), 1, 58),
+    Player(Some("1P"), 1, 60),
+    Player(Some("1Y"), 1, 63),
+    Player(Some("1Z"), 1, 65),
+    Player(Some("1+"), 1, 68),
+    Player(Some("1-"), 1, 70),
+    Player(Some("1*"), 1, 73),
+    Player(Some("1/"), 1, 75),
+    Player(Some("1="), 1, 78),
+    Player(Some("1$"), 1, 80),
+  ),
+  Seq(
+    Player(Some("2E"), 2,  2),
+    Player(Some("2F"), 2,  7),
+    Player(Some("2G"), 2, 12),
+    Player(Some("2H"), 2, 17),
+    Player(Some("2M"), 2, 22),
+    Player(Some("2N"), 2, 27),
+    Player(Some("2O"), 2, 32),
+    Player(Some("2P"), 2, 37),
+    Player(Some("2I"), 2, 42),
+    Player(Some("2J"), 2, 47),
+    Player(Some("2K"), 2, 52),
+    Player(Some("2L"), 2, 57),
+    Player(Some("2A"), 2, 62),
+    Player(Some("2B"), 2, 67),
+    Player(Some("2C"), 2, 72),
+    Player(Some("2D"), 2, 77),
+  ),
+  Seq(
+    Player(Some("3E"), 3,  6),
+    Player(Some("3F"), 3, 11),
+    Player(Some("3A"), 3, 26),
+    Player(Some("3B"), 3, 31),
+    Player(Some("3G"), 3, 46),
+    Player(Some("3H"), 3, 51),
+    Player(Some("3C"), 3, 66),
+    Player(Some("3D"), 3, 71),
+  ),
+  Seq(
+    Player(Some("4D"), 4, 20),
+    Player(Some("4B"), 4, 40),
+    Player(Some("4A"), 4, 60),
+    Player(Some("4C"), 4, 80),
+  ),
+  Seq(
+  ),
+  Seq(
+    Player(Some("5A"), 6, 20),
+    Player(Some("5B"), 6, 40),
+  ),
+  Seq(
+    Player(Some("6A"), 7, 76),
+  ),
+)
+
 Seq(
   Elimination("single-elim-08.svg", seedPlayers( 8), false, 3, 21, Nil, Seq(
     dummyPlayer(Some("2A"), 3, 17),
@@ -393,8 +473,7 @@ Seq(
     dummyPlayer(Some("5B"), 6, 57),
     dummyMatch(6, 51, 57),
     dummyPlayer(None, 7, 54),
-    placeMedal(3, 7, 60),
-    placeMedal(4, 6, 60),
+    placeMedal(3, 7, 56),
   )),
 
 
@@ -423,6 +502,32 @@ Seq(
     placeMedal(2, 8, 22),
     placeMedal(3, 7, 22),
   )),
+
+  Elimination("double-elim-64-1.svg", seedPlayers(64).take(32), true, 7, 66, Nil, Seq(
+    // off to the winner's bracket final
+    dummyMatch(6, 33, 64),
+  )),
+  Elimination("double-elim-64-2.svg", seedPlayers(64).drop(32), true, 7, 66, Nil, Seq(
+    // off to the winner's bracket final
+    ((context: SvgContext) => context.getMatchPath(Match(
+      Some("6A"),
+      Player(None, 6, 33),
+      Player(None, 6,  2),
+    ))),
+    // winner bracket final
+    placeMedal(2, 7, 46),
+    dummyPlayer(None, 7, 17),
+    // THE final
+    placeMedal(1, 8, 46),
+    dummyMatch(7, 17, 64),
+    dummyPlayer(None, 8, 44),
+  )),
+  Elimination("double-elim-64-3.svg", seedPlayers(64), true, 9, 82, drops64, Seq(
+    dummyMatch(9, 46, 2),
+    placeMedal(2, 9, 48),
+    placeMedal(3, 8, 48),
+  )),
+
 ).map { e =>
   val pp = new xml.PrettyPrinter(100, 2)
   write.over(pwd/"drabinki-pdf"/e.label, pp.format(draw(e)))
