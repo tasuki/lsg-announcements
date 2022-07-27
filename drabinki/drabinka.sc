@@ -6,15 +6,15 @@ val alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ+-*/=$"
 
 case class Elimination(
   label: String,
-  participants: Seq[Int],
+  participants: Seq[Seq[Player]],
   double: Boolean,
   rounds: Int,
   verticalSteps: Int,
   drops: Seq[Seq[Player]],
   extras: Seq[SvgContext => xml.Elem],
+  page: Int = 1,
 ) {
-  val multipageDrops = drops.nonEmpty && participants.length > 16
-  val page = participants.head // boy is this not kosher
+  val multipageDrops = drops.nonEmpty && participants.head.length > 16
 }
 case class Player(label: Option[String], round: Int, topOffset: Int)
 case class Match(label: Option[String], p1: Player, p2: Player, shiftUp: Option[Int] = None) {
@@ -43,15 +43,20 @@ def getPower(p: Int): Int =
   if (p > 2) 1 + getPower(p / 2)
   else 1
 
-def seedPlayers(players: Seq[Int], step: Int, steps: Int): Seq[Int] =
+def toPlayers(numbers: Seq[Int]): Seq[Seq[Player]] =
+  Seq(numbers.zipWithIndex.map {
+    case (label, i) => Player(Some(label.toString), 1, 2+2*i)
+  })
+
+def seedNumbers(players: Seq[Int], step: Int, steps: Int): Seq[Int] =
   if (step > steps) players
   else {
     val magic = scala.math.pow(2, step).toInt + 1
     val newPlayers = players.flatMap(p => Seq(p, magic - p))
-    seedPlayers(newPlayers, step + 1, steps)
+    seedNumbers(newPlayers, step + 1, steps)
   }
-def seedPlayers(participants: Int): Seq[Int] =
-  seedPlayers(Seq(1), 1, getPower(participants))
+def seedNumbers(participants: Int): Seq[Int] =
+  seedNumbers(Seq(1), 1, getPower(participants))
 
 def playersMatch(
   players: Seq[Player],
@@ -70,26 +75,28 @@ def playersMatch(
 
 def playOff(
   round: Int,
-  players: Seq[Player],
+  players: Seq[Seq[Player]],
   drops: Seq[Seq[Player]],
   playOffSettings: PlayOffSettings,
 ): (Seq[Match], Seq[Seq[Player]]) = {
-  val allPlayers = players ++ drops.headOption.getOrElse(Nil)
+  val thisRoundPlayers = players.headOption.getOrElse(Nil)
+  val allPlayers = thisRoundPlayers ++ drops.headOption.getOrElse(Nil)
   val matches = playersMatch(
     allPlayers,
     round,
-    playOffSettings.getLabel(players.length),
+    playOffSettings.getLabel(thisRoundPlayers.length),
     Some(playOffSettings.shift(round)),
   )
-  val winners = matches.map(_.winner)
+  val winners: Seq[Player] = matches.map(_.winner)
 
   if (winners.length <= 1 && drops.flatten.length < 1) {
     // there's no more than one winner and there are no more drops
     if (winners.length == 0) (matches, Seq(allPlayers))
     else (matches, Seq(winners))
   } else {
+    val nextRoundPlayers = (players.drop(1).headOption.getOrElse(Nil) ++ winners) +: players.drop(2)
     val (moreMatches, moreWinners) =
-      playOff(round + 1, winners, drops.drop(1), playOffSettings)
+      playOff(round + 1, nextRoundPlayers, drops.drop(1), playOffSettings)
     (moreMatches ++ matches, moreWinners.prepended(winners))
   }
 }
@@ -200,9 +207,7 @@ case class SvgContext(height: Int, width: Int, padding: Int, e: Elimination) {
 
 
 def draw(e: Elimination): xml.Elem = {
-  val initialPlayers: Seq[Player] = e.participants.zipWithIndex.map {
-    case (label, i) => Player(Some(label.toString), 1, 2+2*i)
-  }
+  val initialPlayers: Seq[Seq[Player]] = e.participants
 
   def getDoublePlayersAndMatches() = {
     if (e.multipageDrops) {
@@ -218,7 +223,7 @@ def draw(e: Elimination): xml.Elem = {
       val finale: Seq[Match] = playersMatch(winners.last ++ losers.last, e.rounds, (_, _) => None)
       val winner: Seq[Player] = finale.map(_.winner)
 
-      (initialPlayers ++ winners.flatten ++ e.drops.flatten ++ losers.flatten ++ winner,
+      (initialPlayers.flatten ++ winners.flatten ++ e.drops.flatten ++ losers.flatten ++ winner,
       winnermatches ++ losermatches ++ finale)
     }
   }
@@ -231,7 +236,7 @@ def draw(e: Elimination): xml.Elem = {
   def getSinglePlayersAndMatches() = {
     val singlePlayerSettings = PlayOffSettings(_ + 1 == e.rounds, e.page, shiftRound)
     val (winnermatches, winners) = playOff(1, initialPlayers, Nil, singlePlayerSettings)
-    (initialPlayers ++ winners.flatten,
+    (initialPlayers.flatten ++ winners.flatten,
     winnermatches)
   }
 
@@ -254,6 +259,41 @@ def draw(e: Elimination): xml.Elem = {
     { e.extras.map(extra => extra(context)) }
   </svg>
 }
+
+
+// assemble the ladders
+
+val seed24 = Seq(
+  Seq(
+    Player(Some("16"), 1,  6),
+    Player(Some("17"), 1, 10),
+    Player(Some( "9"), 1, 17),
+    Player(Some("24"), 1, 21),
+    Player(Some("13"), 1, 29),
+    Player(Some("20"), 1, 33),
+    Player(Some("12"), 1, 40),
+    Player(Some("21"), 1, 44),
+    Player(Some("15"), 1, 51),
+    Player(Some("18"), 1, 55),
+    Player(Some("10"), 1, 62),
+    Player(Some("23"), 1, 66),
+    Player(Some("14"), 1, 73),
+    Player(Some("19"), 1, 77),
+    Player(Some("11"), 1, 84),
+    Player(Some("22"), 1, 88),
+  ),
+  Seq(
+    Player(Some( "1"), 2,  4),
+    Player(Some( "8"), 2, 15),
+    Player(Some( "4"), 2, 26),
+    Player(Some( "5"), 2, 37),
+    Player(Some( "2"), 2, 48),
+    Player(Some( "7"), 2, 59),
+    Player(Some( "3"), 2, 70),
+    Player(Some( "6"), 2, 81),
+  ),
+)
+
 
 val drops8 = Seq(
   Seq(
@@ -423,8 +463,10 @@ val drops64 = Seq(
   ),
 )
 
+// eliminations
+
 Seq(
-  Elimination("single-elim-08.svg", seedPlayers( 8), false, 3, 21, Nil, Seq(
+  Elimination("single-elim-08.svg", toPlayers(seedNumbers( 8)), false, 3, 21, Nil, Seq(
     dummyPlayer(Some("2A"), 3, 17),
     dummyPlayer(Some("2B"), 3, 19),
     dummyMatch(3, 17, 19),
@@ -433,7 +475,7 @@ Seq(
     placeMedal(2, 3, 10),
     placeMedal(3, 4, 19),
   )),
-  Elimination("single-elim-16.svg", seedPlayers(16), false, 4, 36, Nil, Seq(
+  Elimination("single-elim-16.svg", toPlayers(seedNumbers(16)), false, 4, 36, Nil, Seq(
     dummyPlayer(Some("3A"), 4, 31),
     dummyPlayer(Some("3B"), 4, 34),
     dummyMatch(4, 31, 34),
@@ -442,7 +484,16 @@ Seq(
     placeMedal(2, 4, 17),
     placeMedal(3, 5, 33),
   )),
-  Elimination("single-elim-32.svg", seedPlayers(32), false, 5, 66, Nil, Seq(
+  Elimination("single-elim-24.svg", seed24, false, 5, 92, Nil, Seq(
+    dummyPlayer(Some("4A"), 5, 80),
+    dummyPlayer(Some("4B"), 5, 86),
+    dummyMatch(5, 80, 86),
+    dummyPlayer(None, 6, 83),
+    placeMedal(1, 6, 44),
+    placeMedal(2, 5, 44),
+    placeMedal(3, 6, 86),
+  )),
+  Elimination("single-elim-32.svg", toPlayers(seedNumbers(32)), false, 5, 66, Nil, Seq(
     dummyPlayer(Some("4A"), 5, 58),
     dummyPlayer(Some("4B"), 5, 62),
     dummyMatch(5, 58, 62),
@@ -451,15 +502,15 @@ Seq(
     placeMedal(2, 5, 32),
     placeMedal(3, 6, 62),
   )),
-  Elimination("single-elim-64-1.svg", seedPlayers(64).take(32), false, 6, 66, Nil, Seq(
+  Elimination("single-elim-64-1.svg", toPlayers(seedNumbers(64).take(32)), false, 6, 66, Nil, Seq(
     // off to the final
     placeMedal(2, 6, 29),
     dummyMatch(6, 27, 64),
     // final
     placeMedal(1, 7, 46),
     dummyPlayer(None, 7, 44),
-  )),
-  Elimination("single-elim-64-2.svg", seedPlayers(64).drop(32), false, 6, 66, Nil, Seq(
+  ), 1),
+  Elimination("single-elim-64-2.svg", toPlayers(seedNumbers(64).drop(32)), false, 6, 66, Nil, Seq(
     // off to the final
     placeMedal(2, 6, 29),
     dummyMatch(6, 27, 2),
@@ -469,40 +520,40 @@ Seq(
     dummyMatch(6, 51, 57),
     dummyPlayer(None, 7, 54),
     placeMedal(3, 7, 56),
-  )),
+  ), 2),
 
 
-  Elimination("double-elim-08.svg", seedPlayers( 8),  true, 6,  30, drops8,  Seq(
+  Elimination("double-elim-08.svg", toPlayers(seedNumbers( 8)),  true, 6,  30, drops8,  Seq(
     loserLabelBottomLeft,
     placeMedal(1, 7, 15),
     placeMedal(2, 6, 15),
     placeMedal(3, 5, 15),
   )),
-  Elimination("double-elim-16.svg", seedPlayers(16),  true, 7,  52, drops16, Seq(
+  Elimination("double-elim-16.svg", toPlayers(seedNumbers(16)),  true, 7,  52, drops16, Seq(
     loserLabelBottomLeft,
     placeMedal(1, 8, 29),
     placeMedal(2, 7, 29),
     placeMedal(3, 6, 29),
   )),
 
-  Elimination("double-elim-32-1.svg", seedPlayers(32), true, 6, 66, Nil, Seq(
+  Elimination("double-elim-32-1.svg", toPlayers(seedNumbers(32)), true, 6, 66, Nil, Seq(
     dummyMatch(6, 33, 64),
     dummyPlayer(None, 7, 60),
     placeMedal(1, 7, 50),
     placeMedal(2, 6, 50),
   )),
-  Elimination("double-elim-32-2.svg", seedPlayers(32), true, 8, 42, drops32, Seq(
+  Elimination("double-elim-32-2.svg", toPlayers(seedNumbers(32)), true, 8, 42, drops32, Seq(
     dummyMatch(8, 21, 2),
     loserLabelBottomRight,
     placeMedal(2, 8, 22),
     placeMedal(3, 7, 22),
   )),
 
-  Elimination("double-elim-64-1.svg", seedPlayers(64).take(32), true, 7, 66, Nil, Seq(
+  Elimination("double-elim-64-1.svg", toPlayers(seedNumbers(64).take(32)), true, 7, 66, Nil, Seq(
     // off to the winner's bracket final
     dummyMatch(6, 33, 64),
-  )),
-  Elimination("double-elim-64-2.svg", seedPlayers(64).drop(32), true, 7, 66, Nil, Seq(
+  ), 1),
+  Elimination("double-elim-64-2.svg", toPlayers(seedNumbers(64).drop(32)), true, 7, 66, Nil, Seq(
     // off to the winner's bracket final
     ((context: SvgContext) => context.getMatchPath(Match(
       Some("6A"),
@@ -516,8 +567,8 @@ Seq(
     placeMedal(1, 8, 46),
     dummyMatch(7, 17, 64),
     dummyPlayer(None, 8, 44),
-  )),
-  Elimination("double-elim-64-3.svg", seedPlayers(64), true, 9, 82, drops64, Seq(
+  ), 2),
+  Elimination("double-elim-64-3.svg", toPlayers(seedNumbers(64)), true, 9, 82, drops64, Seq(
     dummyMatch(9, 46, 2),
     placeMedal(2, 9, 48),
     placeMedal(3, 8, 48),
