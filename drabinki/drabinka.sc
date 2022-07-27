@@ -13,12 +13,7 @@ case class Elimination(
   drops: Seq[Seq[Player]],
   extras: Seq[SvgContext => xml.Elem],
 ) {
-  // symmetrical, sums to zero
-  val nudges =
-    (1 to (1 + rounds)).map(r => (2 + rounds - 2 * r) / 2)
-
   val multipageDrops = drops.nonEmpty && participants.length > 16
-  val multipageElimination = participants.length > 32
   val page = participants.head // boy is this not kosher
 }
 case class Player(label: Option[String], round: Int, topOffset: Int)
