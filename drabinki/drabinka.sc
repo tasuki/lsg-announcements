@@ -273,30 +273,92 @@ val seed24 = Seq(
   Seq(
     Player(Some("16"), 1,  6),
     Player(Some("17"), 1, 10),
-    Player(Some( "9"), 1, 17),
-    Player(Some("24"), 1, 21),
-    Player(Some("13"), 1, 29),
-    Player(Some("20"), 1, 33),
-    Player(Some("12"), 1, 40),
-    Player(Some("21"), 1, 44),
-    Player(Some("15"), 1, 51),
-    Player(Some("18"), 1, 55),
-    Player(Some("10"), 1, 62),
-    Player(Some("23"), 1, 66),
-    Player(Some("14"), 1, 73),
-    Player(Some("19"), 1, 77),
-    Player(Some("11"), 1, 84),
-    Player(Some("22"), 1, 88),
+    Player(Some( "9"), 1, 16),
+    Player(Some("24"), 1, 20),
+    Player(Some("13"), 1, 26),
+    Player(Some("20"), 1, 30),
+    Player(Some("12"), 1, 36),
+    Player(Some("21"), 1, 40),
+    Player(Some("15"), 1, 46),
+    Player(Some("18"), 1, 50),
+    Player(Some("10"), 1, 56),
+    Player(Some("23"), 1, 60),
+    Player(Some("14"), 1, 66),
+    Player(Some("19"), 1, 70),
+    Player(Some("11"), 1, 76),
+    Player(Some("22"), 1, 80),
   ),
   Seq(
     Player(Some( "1"), 2,  4),
-    Player(Some( "8"), 2, 15),
-    Player(Some( "4"), 2, 26),
-    Player(Some( "5"), 2, 37),
-    Player(Some( "2"), 2, 48),
-    Player(Some( "7"), 2, 59),
-    Player(Some( "3"), 2, 70),
-    Player(Some( "6"), 2, 81),
+    Player(Some( "8"), 2, 14),
+    Player(Some( "4"), 2, 24),
+    Player(Some( "5"), 2, 34),
+    Player(Some( "2"), 2, 44),
+    Player(Some( "7"), 2, 54),
+    Player(Some( "3"), 2, 64),
+    Player(Some( "6"), 2, 74),
+  ),
+)
+
+val seed48a = Seq(
+  Seq(
+    Player(Some("32"), 1,  6),
+    Player(Some("33"), 1, 10),
+    Player(Some("17"), 1, 16),
+    Player(Some("48"), 1, 20),
+    Player(Some("25"), 1, 26),
+    Player(Some("40"), 1, 30),
+    Player(Some("24"), 1, 36),
+    Player(Some("41"), 1, 40),
+    Player(Some("29"), 1, 46),
+    Player(Some("36"), 1, 50),
+    Player(Some("20"), 1, 56),
+    Player(Some("45"), 1, 60),
+    Player(Some("28"), 1, 66),
+    Player(Some("37"), 1, 70),
+    Player(Some("21"), 1, 76),
+    Player(Some("44"), 1, 80),
+  ),
+  Seq(
+    Player(Some( "1"), 2,  4),
+    Player(Some("16"), 2, 14),
+    Player(Some( "8"), 2, 24),
+    Player(Some( "9"), 2, 34),
+    Player(Some( "4"), 2, 44),
+    Player(Some("13"), 2, 54),
+    Player(Some( "5"), 2, 64),
+    Player(Some("12"), 2, 74),
+  ),
+)
+
+val seed48b = Seq(
+  Seq(
+    Player(Some("31"), 1,  6),
+    Player(Some("34"), 1, 10),
+    Player(Some("18"), 1, 16),
+    Player(Some("47"), 1, 20),
+    Player(Some("26"), 1, 26),
+    Player(Some("39"), 1, 30),
+    Player(Some("23"), 1, 36),
+    Player(Some("42"), 1, 40),
+    Player(Some("30"), 1, 46),
+    Player(Some("35"), 1, 50),
+    Player(Some("19"), 1, 56),
+    Player(Some("46"), 1, 60),
+    Player(Some("27"), 1, 66),
+    Player(Some("38"), 1, 70),
+    Player(Some("22"), 1, 76),
+    Player(Some("43"), 1, 80),
+  ),
+  Seq(
+    Player(Some( "2"), 2,  4),
+    Player(Some("15"), 2, 14),
+    Player(Some( "7"), 2, 24),
+    Player(Some("10"), 2, 34),
+    Player(Some( "3"), 2, 44),
+    Player(Some("14"), 2, 54),
+    Player(Some( "6"), 2, 64),
+    Player(Some("11"), 2, 74),
   ),
 )
 
@@ -346,22 +408,22 @@ val drops16 = Seq(
 
 val drops24 = Seq(
   Seq(
-    Player(Some("2C"), 1,  3),
-    Player(Some("1A"), 1,  5),
-    Player(Some("2D"), 1,  7),
-    Player(Some("1B"), 1,  9),
-    Player(Some("2G"), 1, 13),
-    Player(Some("1E"), 1, 15),
-    Player(Some("2H"), 1, 17),
-    Player(Some("1F"), 1, 19),
-    Player(Some("2E"), 1, 23),
-    Player(Some("1C"), 1, 25),
-    Player(Some("2F"), 1, 27),
-    Player(Some("1D"), 1, 29),
-    Player(Some("2A"), 1, 33),
-    Player(Some("1G"), 1, 35),
-    Player(Some("2B"), 1, 37),
-    Player(Some("1H"), 1, 39),
+    Player(Some("1A"), 1,  3),
+    Player(Some("2C"), 1,  5),
+    Player(Some("1B"), 1,  7),
+    Player(Some("2D"), 1,  9),
+    Player(Some("1E"), 1, 13),
+    Player(Some("2G"), 1, 15),
+    Player(Some("1F"), 1, 17),
+    Player(Some("2H"), 1, 19),
+    Player(Some("1C"), 1, 23),
+    Player(Some("2E"), 1, 25),
+    Player(Some("1D"), 1, 27),
+    Player(Some("2F"), 1, 29),
+    Player(Some("1G"), 1, 33),
+    Player(Some("2A"), 1, 35),
+    Player(Some("1H"), 1, 37),
+    Player(Some("2B"), 1, 39),
   ),
   Seq(),
   Seq(
@@ -421,6 +483,68 @@ val drops32 = Seq(
   ),
   Seq(
     Player(Some("5A"), 6, 36),
+  ),
+)
+
+val drops48 = Seq(
+  Seq(
+    Player(Some("1A"), 1,  2),
+    Player(Some("2E"), 1,  4),
+    Player(Some("1B"), 1,  7),
+    Player(Some("2F"), 1,  9),
+    Player(Some("1C"), 1, 12),
+    Player(Some("2G"), 1, 14),
+    Player(Some("1D"), 1, 16),
+    Player(Some("2H"), 1, 18),
+    Player(Some("1I"), 1, 20),
+    Player(Some("2M"), 1, 22),
+    Player(Some("1J"), 1, 25),
+    Player(Some("2N"), 1, 27),
+    Player(Some("1K"), 1, 30),
+    Player(Some("2O"), 1, 32),
+    Player(Some("1L"), 1, 34),
+    Player(Some("2P"), 1, 36),
+    Player(Some("1E"), 1, 38),
+    Player(Some("2I"), 1, 40),
+    Player(Some("1F"), 1, 43),
+    Player(Some("2J"), 1, 45),
+    Player(Some("1G"), 1, 48),
+    Player(Some("2K"), 1, 50),
+    Player(Some("1H"), 1, 52),
+    Player(Some("2L"), 1, 54),
+    Player(Some("1M"), 1, 56),
+    Player(Some("2A"), 1, 58),
+    Player(Some("1N"), 1, 61),
+    Player(Some("2B"), 1, 63),
+    Player(Some("1O"), 1, 66),
+    Player(Some("2C"), 1, 68),
+    Player(Some("1P"), 1, 70),
+    Player(Some("2D"), 1, 72),
+  ),
+  Seq(
+    Player(Some("3E"), 2,  6),
+    Player(Some("3F"), 2, 11),
+    Player(Some("3A"), 2, 24),
+    Player(Some("3B"), 2, 29),
+    Player(Some("3G"), 2, 42),
+    Player(Some("3H"), 2, 47),
+    Player(Some("3C"), 2, 60),
+    Player(Some("3D"), 2, 65),
+  ),
+  Seq(
+    Player(Some("4D"), 3, 19),
+    Player(Some("4B"), 3, 37),
+    Player(Some("4A"), 3, 55),
+    Player(Some("4C"), 3, 73),
+  ),
+  Seq(
+  ),
+  Seq(
+    Player(Some("5A"), 5, 20),
+    Player(Some("5B"), 5, 38),
+  ),
+  Seq(
+    Player(Some("6A"), 6, 70),
   ),
 )
 
@@ -525,14 +649,14 @@ Seq(
     placeMedal(2, 4, 17),
     placeMedal(3, 5, 33),
   )),
-  Elimination("single-elim-24.svg", seed24, false, 5, 92, Nil, Seq(
-    dummyPlayer(Some("4A"), 5, 80),
-    dummyPlayer(Some("4B"), 5, 86),
-    dummyMatch(5, 80, 86),
-    dummyPlayer(None, 6, 83),
-    placeMedal(1, 6, 44),
-    placeMedal(2, 5, 44),
-    placeMedal(3, 6, 86),
+  Elimination("single-elim-24.svg", seed24, false, 5, 84, Nil, Seq(
+    dummyPlayer(Some("4A"), 5, 74),
+    dummyPlayer(Some("4B"), 5, 80),
+    dummyMatch(5, 74, 80),
+    dummyPlayer(None, 6, 77),
+    placeMedal(1, 6, 40),
+    placeMedal(2, 5, 40),
+    placeMedal(3, 6, 79),
   )),
   Elimination("single-elim-32.svg", toPlayers(seedNumbers(32)), false, 5, 66, Nil, Seq(
     dummyPlayer(Some("4A"), 5, 58),
@@ -543,6 +667,25 @@ Seq(
     placeMedal(2, 5, 32),
     placeMedal(3, 6, 62),
   )),
+  Elimination("single-elim-48-1.svg", seed48a, false, 6, 85, Nil, Seq(
+    // off to the final
+    dummyMatch(6, 35, 80),
+    placeMedal(2, 6, 37),
+    // final
+    dummyPlayer(None, 7, 65),
+    placeMedal(1, 7, 67),
+  ), 1),
+  Elimination("single-elim-48-2.svg", seed48b, false, 6, 85, Nil, Seq(
+    // off to the final
+    dummyMatch(6, 35, 6),
+    placeMedal(2, 6, 37),
+    // third place
+    dummyPlayer(Some("5A"), 6, 70),
+    dummyPlayer(Some("5B"), 6, 76),
+    dummyMatch(6, 70, 76),
+    dummyPlayer(None, 7, 73),
+    placeMedal(3, 7, 75),
+  ), 2),
   Elimination("single-elim-64-1.svg", toPlayers(seedNumbers(64).take(32)), false, 6, 66, Nil, Seq(
     // off to the final
     placeMedal(2, 6, 29),
@@ -577,11 +720,11 @@ Seq(
     placeMedal(3, 6, 29),
   )),
 
-  Elimination("double-elim-24-1.svg", seed24, true, 6, 92, Nil, Seq(
-    dummyMatch(6, 44, 85),
-    dummyPlayer(None, 7, 70),
-    placeMedal(1, 7, 74),
-    placeMedal(2, 6, 74),
+  Elimination("double-elim-24-1.svg", seed24, true, 6, 84, Nil, Seq(
+    dummyMatch(6, 41, 80),
+    dummyPlayer(None, 7, 66),
+    placeMedal(1, 7, 69),
+    placeMedal(2, 6, 69),
   )),
   Elimination("double-elim-24-2.svg", seed24, true, 7, 42, drops24, Seq(
     dummyMatch(7, 22, 2),
@@ -603,6 +746,31 @@ Seq(
     placeMedal(3, 7, 22),
   )),
 
+  Elimination("double-elim-48-1.svg", seed48a, true, 7, 85, Nil, Seq(
+    // off to the winner's bracket final
+    dummyMatch(6, 41, 80),
+  ), 1),
+  Elimination("double-elim-48-2.svg", seed48b, true, 7, 85, Nil, Seq(
+    // off to the winner's bracket final
+    ((context: SvgContext) => context.getMatchPath(Match(
+      Some("6A"),
+      Player(None, 6, 41),
+      Player(None, 6,  6),
+    ))),
+    // winner bracket final
+    dummyPlayer(None, 7, 22),
+    placeMedal(2, 7, 24),
+    // THE final
+    dummyMatch(7, 22, 80),
+    dummyPlayer(None, 8, 60),
+    placeMedal(1, 8, 62),
+  ), 2),
+  Elimination("double-elim-48-3.svg", seed48a, true, 8, 74, drops48, Seq(
+    dummyMatch(8, 43, 2),
+    placeMedal(2, 8, 45),
+    placeMedal(3, 7, 45),
+  ), 1),
+
   Elimination("double-elim-64-1.svg", toPlayers(seedNumbers(64).take(32)), true, 7, 66, Nil, Seq(
     // off to the winner's bracket final
     dummyMatch(6, 33, 64),
@@ -615,12 +783,12 @@ Seq(
       Player(None, 6,  2),
     ))),
     // winner bracket final
-    placeMedal(2, 7, 46),
     dummyPlayer(None, 7, 17),
+    placeMedal(2, 7, 46),
     // THE final
-    placeMedal(1, 8, 46),
     dummyMatch(7, 17, 64),
     dummyPlayer(None, 8, 44),
+    placeMedal(1, 8, 46),
   ), 2),
   Elimination("double-elim-64-3.svg", toPlayers(seedNumbers(64)), true, 9, 82, drops64, Seq(
     dummyMatch(9, 46, 2),
