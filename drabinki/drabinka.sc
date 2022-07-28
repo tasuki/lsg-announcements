@@ -722,9 +722,10 @@ Seq(
 
   Elimination("double-elim-24-1.svg", seed24, true, 6, 84, Nil, Seq(
     dummyMatch(6, 41, 80),
+    placeMedal(2, 6, 43),
+    // winner
     dummyPlayer(None, 7, 66),
-    placeMedal(1, 7, 69),
-    placeMedal(2, 6, 69),
+    placeMedal(1, 7, 68),
   )),
   Elimination("double-elim-24-2.svg", seed24, true, 7, 42, drops24, Seq(
     dummyMatch(7, 22, 2),
@@ -735,9 +736,10 @@ Seq(
 
   Elimination("double-elim-32-1.svg", toPlayers(seedNumbers(32)), true, 6, 66, Nil, Seq(
     dummyMatch(6, 33, 64),
-    dummyPlayer(None, 7, 60),
-    placeMedal(1, 7, 50),
-    placeMedal(2, 6, 50),
+    placeMedal(2, 6, 35),
+    // winner
+    dummyPlayer(None, 7, 55),
+    placeMedal(1, 7, 57),
   )),
   Elimination("double-elim-32-2.svg", toPlayers(seedNumbers(32)), true, 8, 42, drops32, Seq(
     dummyMatch(8, 21, 2),
@@ -784,7 +786,7 @@ Seq(
     ))),
     // winner bracket final
     dummyPlayer(None, 7, 17),
-    placeMedal(2, 7, 46),
+    placeMedal(2, 7, 19),
     // THE final
     dummyMatch(7, 17, 64),
     dummyPlayer(None, 8, 44),
