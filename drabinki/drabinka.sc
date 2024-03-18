@@ -1,5 +1,3 @@
-import ammonite.ops._
-
 // data
 
 val alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ+-*/=$"
@@ -800,5 +798,5 @@ Seq(
 
 ).map { e =>
   val pp = new xml.PrettyPrinter(100, 2)
-  write.over(pwd/"drabinki-pdf"/e.label, pp.format(draw(e)))
+  os.write.over(os.pwd/"drabinki-pdf"/e.label, pp.format(draw(e)))
 }
