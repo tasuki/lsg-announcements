@@ -6,15 +6,21 @@ On Debian-ish systems...
 
 ### TeX
 
-`sudo apt install texlive texlive-xetex texlive-lang-polish`
+```
+sudo apt install texlive texlive-xetex texlive-lang-polish texlive-fonts-extra
+```
 
 ### Inkscape
 
-`sudo apt install inkscape`
+```
+sudo apt install inkscape
+```
 
 ### Pdfunite
 
-`sudo apt install poppler-utils`
+```
+sudo apt install poppler-utils
+```
 
 ### Scala scripting
 

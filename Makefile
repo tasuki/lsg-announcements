@@ -30,12 +30,14 @@ zapisy-pdf/zapisy-fantom.pdf: zapisy/zapisy-fantom.tex
 zapisy-pdf/zapisy-rengo.pdf: zapisy/zapisy-rengo.tex
 	xelatex -output-directory zapisy-pdf zapisy/zapisy-rengo.tex
 
-handi: handi-pdf/handi-9.pdf handi-pdf/handi-13.pdf
+handi: handi-pdf/handi-blitz.pdf handi-pdf/handi-9.pdf handi-pdf/handi-13.pdf
 
 handi-pdf/handi-9.pdf: handi/handi-9.tex
 	xelatex -output-directory handi-pdf handi/handi-9.tex
 handi-pdf/handi-13.pdf: handi/handi-13.tex
 	xelatex -output-directory handi-pdf handi/handi-13.tex
+handi-pdf/handi-blitz.pdf: handi/handi-blitz.tex
+	xelatex -output-directory handi-pdf handi/handi-blitz.tex
 
 drabinki: drabinki-svg \
 	drabinki-pdf/single-elim-08.pdf drabinki-pdf/double-elim-08.pdf \
